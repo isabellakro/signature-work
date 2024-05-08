@@ -79,17 +79,17 @@ def ejscreen_cal(input_csv, output_csv, output_lookup, to_featureclass = False, 
     if len(col_names.extra_cols) > 0:
         ejscreen_full = pd.concat([ejscreen_full, extra_df], axis=1) 
 
-    index_names_2f = [i for i in col_names.index_names if i.startswith('P_D2_')]
-    index_names_5f = [i for i in col_names.index_names if i.startswith('P_D5_')]
+    index_names_2f = [i for i in col_names.percentile_bin_text_names if i.startswith('P_D2_')]
+    index_names_5f = [i for i in col_names.percentile_bin_text_names if i.startswith('P_D5_')]
 
     #count how many 2 factor EJ Indexes exceed the 80th percentile
     ejscreen_full['EXCEED_COUNT_80'] = ejscreen_full[index_names_2f].ge(80).sum(axis=1) 
     
     #count how many 5 factor EJ Indexes exceed the 80th percentile
-    ejscreen_full['EXCEED_COUNT_80_SUPP'] = ejscreen_full[index_names_5f].ge(80).sum(axis=1) 
+    ejscreen_full['EXCEED_COUNT_80_SUP'] = ejscreen_full[index_names_5f].ge(80).sum(axis=1) 
     
     #combine the two lookup tables
-    ejscreen_lookup = pd.concat([indicator_lookup, index_lookup], axis=1)
+    ejscreen_lookup = pd.concat([indicator_lookup, index_lookup.drop(["PCTILE", "REGION"], axis = 1)], axis=1) 
 
     #put columns in correct order
     ejscreen_full = ejscreen_full[col_names.cols_all] 
@@ -98,6 +98,7 @@ def ejscreen_cal(input_csv, output_csv, output_lookup, to_featureclass = False, 
     ejscreen_lookup.to_excel(output_lookup)
 
     if to_featureclass == True:
+        exportTable(geom_source, ejscreen_lookup, "/USA" )
         exportSpatial(geom_source, ejscreen_full, output_fc, schema)
 
 
@@ -159,16 +160,16 @@ def ejscreenState_cal(input_csv, output_csv, output_lookup, to_featureclass = Fa
         ejscreen_full = pd.concat([ejscreen_full, extra_df], axis=1) 
 
     #get 2 factor percentile columns
-    index_names_2f = [i for i in col_names.index_names if i.startswith('P_D2_')] 
+    index_names_2f = [i for i in col_names.percentile_bin_text_names if i.startswith('P_D2_')] 
     
     #get 5 factor percentiles columns
-    index_names_5f = [i for i in col_names.index_names if i.startswith('P_D5_')] 
+    index_names_5f = [i for i in col_names.percentile_bin_text_names if i.startswith('P_D5_')] 
 
     #count how many 2 factor EJ Indexes exceed the 80th percentile
     ejscreen_full['EXCEED_COUNT_80'] = ejscreen_full[index_names_2f].ge(80).sum(axis=1) 
     
     # count how many 5 factor EJ Indexes exceed the 80th percentile
-    ejscreen_full['EXCEED_COUNT_80_SUPP'] = ejscreen_full[index_names_5f].ge(80).sum(axis=1) 
+    ejscreen_full['EXCEED_COUNT_80_SUP'] = ejscreen_full[index_names_5f].ge(80).sum(axis=1) 
 
     
     #combines the indicators lookup with the indexes lookup
@@ -187,6 +188,11 @@ def ejscreenState_cal(input_csv, output_csv, output_lookup, to_featureclass = Fa
     ejscreen_lookup.to_excel(output_lookup)
 
     if to_featureclass == True:
+
+        #exporting the state lookup table directly to a geodatabase table currently encounters an ESRI error. 
+        #will need to look into this at a later date, but it isn't much work to import the lookup table from the excel file
+
+        #exportTable(geom_source, ejscreen_lookup, "/States" )
         exportSpatial(geom_source, ejscreen_full, output_fc, schema)
 
 #-------------------------------------------------------------------------------
@@ -209,11 +215,14 @@ def percentileCal(ejscreen_data_df, output_csv_percentiles = "", output_xlsx_loo
      #create empty lookup table with percentile column
      lookup = pd.DataFrame(pct_list, columns=["PCTILE"]) 
 
+     lookup["idx"] = lookup.PCTILE
+
      #change PCTILE column to string so "mean" can be added later
-     lookup = lookup.astype(str) 
+     lookup = lookup.astype(str)
 
      #set PCTILE as the index so you dont output an extra column
-     lookup = lookup.set_index(['PCTILE']) 
+     lookup = lookup.set_index(['idx'])
+     lookup = lookup.assign(REGION="USA")
 
      #generate statistics for every column
      desc = ejscreen_data_df[percentile_column_names].describe() 
@@ -240,9 +249,13 @@ def percentileCal(ejscreen_data_df, output_csv_percentiles = "", output_xlsx_loo
      lookup = pd.concat([lookup, means], axis = 0) 
      lookup = pd.concat([lookup, sdev], axis = 0) 
 
+     lookup.REGION = lookup.REGION.fillna("USA")
+     lookup.PCTILE = lookup.index
+
      #update field name that doesnt follow naming convention
      if "P_PRE1960PCT" in ejscreen_data_df.columns:   
         ejscreen_data_df.rename(columns={"P_PRE1960PCT":"P_LDPNT"}, inplace = True) 
+
 
      #if true, output to excel and csv respectively
      if(output == True): 
@@ -444,6 +457,18 @@ def getBin(pct):
 # 
 #-------------------------------------------------------------------------------
 
+def exportTable(areas, lookup_df, output_name):
+
+    import arcpy
+    from arcgis import GeoAccessor, GeoSeriesAccessor
+
+
+    output_path = os.path.dirname(areas) + output_name
+    print(lookup_df)
+    lookup_df = lookup_df.astype({'REGION':'string'})
+
+    lookup_df.spatial.to_table(location= output_path, sanitize_columns = False)
+
 def exportSpatial(areas, data_df, output_fc, schema = "", join_field = "ID"):
 
     import arcpy
@@ -456,6 +481,8 @@ def exportSpatial(areas, data_df, output_fc, schema = "", join_field = "ID"):
     sdf = pd.DataFrame.spatial.from_featureclass(areas) 
 
     print("Merging Datasets...")
+
+    data_df = data_df.astype('string')
 
     #join ejscreen data to spatial dataframe based on ID
     ejscreen_df = pd.merge(sdf, data_df, on=join_field) 
@@ -535,7 +562,7 @@ def calDemogIdx(ejdf):
     #calculate stats (which includes mean and standard deviation) for ejscreen input dataframe
     ejdf_stats = ejdf.describe()
 
-    demog_indicators = ["PEOPCOLORPCT","LOWINCPCT","LINGISOPCT","LESSHSPCT","LIFEEXPPCT","PCT_DISABILITY"]
+    demog_indicators = ["PEOPCOLORPCT","LOWINCPCT","LINGISOPCT","LESSHSPCT","LIFEEXPPCT","DISABILITYPCT"]
 
     #calculate Z score for 6 demographic indicators
     for col in demog_indicators:
@@ -544,8 +571,8 @@ def calDemogIdx(ejdf):
     #calculate demographic indexes based on Z score values
     ejdf["DEMOGIDX_2"] = (ejdf.PEOPCOLORPCT_Z + ejdf.LOWINCPCT_Z)/2
 
-    ejdf["DEMOGIDX_5"].loc[ejdf["LIFEEXPPCT"].notna()]= (ejdf.LOWINCPCT_Z + ejdf.LINGISOPCT_Z + ejdf.LESSHSPCT_Z + ejdf.PCT_DISABILITY + ejdf.LIFEEXPPCT_Z)/5
+    ejdf["DEMOGIDX_5"].loc[ejdf["LIFEEXPPCT"].notna()]= (ejdf.LOWINCPCT_Z + ejdf.LINGISOPCT_Z + ejdf.LESSHSPCT_Z + ejdf.DISABILITYPCT_Z + ejdf.LIFEEXPPCT_Z)/5
     
-    ejdf["DEMOGIDX_5"].loc[ejdf["LIFEEXPPCT"].isna()]= (ejdf.LOWINCPCT_Z + ejdf.LINGISOPCT_Z + ejdf.LESSHSPCT_Z + ejdf.PCT_DISABILITY)/4
+    ejdf["DEMOGIDX_5"].loc[ejdf["LIFEEXPPCT"].isna()]= (ejdf.LOWINCPCT_Z + ejdf.LINGISOPCT_Z + ejdf.LESSHSPCT_Z + ejdf.DISABILITYPCT_Z)/4
 
     return(ejdf)

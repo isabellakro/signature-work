@@ -16,16 +16,16 @@ if __name__ == '__main__':
     
     #set `option` to 1 to generate national percentiles.
     #set `option` to 2 to generate state percentiles
-    level = 1
+    level = 2
 
     #path to input csv dataset
-    input_csv_path = "data/EJSCREEN_2023_BG_with_AS_CNMI_GU_VI.csv"
+    input_csv_path = "data/EJSCREEN_2024.csv"
 
     #path to output csv dataset
-    output_csv_path = "data/EJSCREEN_Output_USA.csv"
+    output_csv_path = "data/EJSCREEN_Output_State_2024.csv"
 
     #path to output lookuptable excel file
-    lookuptable_xlsx_path = "data/lookup_USA.xlsx"
+    lookuptable_xlsx_path = "data/lookup_State_2024.xlsx"
 
     #whether or not you wish to join the output to geometry and export to ESRI Feature Class
     output_to_featureclass = True
@@ -34,10 +34,10 @@ if __name__ == '__main__':
     geometry_featureclass_path = "data/BlockGroups.gdb/BG"
 
     #path to output ESRI Feature Class
-    output_featureclass_path = "data/BlockGroups.gdb/EJSCREEN_Output_USA"
+    output_featureclass_path = "data/BlockGroups.gdb/EJSCREEN_Output_State_2024"
 
     #path to ESRI schema csv file 
-    schema_csv_path = "data/ejscreen_schema.csv"
+    schema_csv_path = "ejscreen_schema.csv"
 
 #*************************************************************************************************************************************    
     if level != 1 and level != 2:
