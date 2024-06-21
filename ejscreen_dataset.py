@@ -22,10 +22,10 @@ if __name__ == '__main__':
     input_csv_path = "data/EJSCREEN_2024_Corrected.csv"
 
     #path to output csv dataset
-    output_csv_path = "data/EJSCREEN_CorrectedOutput_State_2024.csv"
+    output_csv_path = "data/EJSCREEN_Min0_Output_State_2024.csv"
 
     #path to output lookuptable excel file
-    lookuptable_xlsx_path = "data/lookup_State_Corrected_2024.xlsx"
+    lookuptable_xlsx_path = "data/lookup_State_Min0_2024.xlsx"
 
     #whether or not you wish to join the output to geometry and export to ESRI Feature Class
     output_to_featureclass = True
@@ -34,7 +34,7 @@ if __name__ == '__main__':
     geometry_featureclass_path = "data/BlockGroups.gdb/BG"
 
     #path to output ESRI Feature Class
-    output_featureclass_path = "data/BlockGroups.gdb/EJSCREEN_Output_State_Corrected_2024"
+    output_featureclass_path = "data/BlockGroups.gdb/EJSCREEN_Output_State_Min0_2024"
 
     #path to ESRI schema csv file 
     schema_csv_path = "ejscreen_schema.csv"

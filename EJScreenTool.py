@@ -568,11 +568,24 @@ def calDemogIdx(ejdf):
     for col in demog_indicators:
         ejdf[col + "_Z"] = (ejdf[col]- ejdf_stats[col].iloc[[1]].values[0])/ejdf_stats[col].iloc[[2]].values[0]
 
-    #calculate demographic indexes based on Z score values
+    #calculate initial demographic indexes based on Z score values
     ejdf["DEMOGIDX_2"] = (ejdf.PEOPCOLORPCT_Z + ejdf.LOWINCPCT_Z)/2
 
     ejdf["DEMOGIDX_5"].loc[ejdf["LIFEEXPPCT"].notna()]= (ejdf.LOWINCPCT_Z + ejdf.LINGISOPCT_Z + ejdf.LESSHSPCT_Z + ejdf.DISABILITYPCT_Z + ejdf.LIFEEXPPCT_Z)/5
     
     ejdf["DEMOGIDX_5"].loc[ejdf["LIFEEXPPCT"].isna()]= (ejdf.LOWINCPCT_Z + ejdf.LINGISOPCT_Z + ejdf.LESSHSPCT_Z + ejdf.DISABILITYPCT_Z)/4
+
+    #get minimum value for both demographic indexes
+    desc2 = ejdf["DEMOGIDX_2"].describe()
+    desc5 = ejdf["DEMOGIDX_5"].describe()
+
+    min2 = desc2.iloc[[3]].values[0]
+    min5 = desc5.iloc[[3]].values[0]
+
+
+    #add the absolute value of the miminum to all values, setting the minimum value to 0
+    ejdf["DEMOGIDX_2"] = ejdf["DEMOGIDX_2"] + abs(min2)
+    ejdf["DEMOGIDX_5"] = ejdf["DEMOGIDX_5"] + abs(min5)
+
 
     return(ejdf)
