@@ -39,8 +39,8 @@ By default, the following columns are required:
 | ACSUNEMPBAS | PM25 | |
 | PEOPCOLOR | OZONE | |
 | LOWINCOME | DSLPM | |
-| UNEMPLOYED | CANCER | |
-| LINGISO | RESP | |
+| UNEMPLOYED | DWATER | |
+| LINGISO | NO2 | |
 | LESSHS | RSEI_AIR | |
 | UNDER5 | PTRAF | |
 | OVER64 | PRE1960PCT | |
