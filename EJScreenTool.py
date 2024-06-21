@@ -575,15 +575,21 @@ def calDemogIdx(ejdf):
     
     ejdf["DEMOGIDX_5"].loc[ejdf["LIFEEXPPCT"].isna()]= (ejdf.LOWINCPCT_Z + ejdf.LINGISOPCT_Z + ejdf.LESSHSPCT_Z + ejdf.DISABILITYPCT_Z)/4
 
-    #get minimum value for both demographic indexes
+    
+    #the code below shifts all demographic index values to be non-negative
+    #this is to account for cases where artificial effect could arise due to negative demographic index values
+    
+    #get summary statistics of demographic indexes
     desc2 = ejdf["DEMOGIDX_2"].describe()
     desc5 = ejdf["DEMOGIDX_5"].describe()
 
+    #extract minimum value from summary statistics retrieved above
     min2 = desc2.iloc[[3]].values[0]
     min5 = desc5.iloc[[3]].values[0]
 
 
-    #add the absolute value of the miminum to all values, setting the minimum value to 0
+    #add the absolute value of the miminum to all demographic index values, setting the minimum value of demographic index to 0
+    #which makes all demographic index values non-negative
     ejdf["DEMOGIDX_2"] = ejdf["DEMOGIDX_2"] + abs(min2)
     ejdf["DEMOGIDX_5"] = ejdf["DEMOGIDX_5"] + abs(min5)
 
