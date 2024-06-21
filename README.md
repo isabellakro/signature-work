@@ -36,19 +36,20 @@ By default, the following columns are required:
 | ACSEDUCBAS | UNDER5PCT | |
 | ACSTOTHH | OVER64PCT | |
 | ACSTOTHU | LIFEEXPPCT | |
-| ACSUNEMPBAS | PM25 | |
+| ACSUNEMPBAS | DISABILITYPCT | |
+| ACSDISABBAS | PM25 | |
 | PEOPCOLOR | OZONE | |
 | LOWINCOME | DSLPM | |
-| UNEMPLOYED | CANCER | |
-| LINGISO | RESP | |
+| UNEMPLOYED | DWATER | |
+| LINGISO | NO2 | |
 | LESSHS | RSEI_AIR | |
-| UNDER5 | PTRAF | |
-| OVER64 | PRE1960PCT | |
-| PRE1960 | PNPL |  |
-|  | PRMP | |
+| DISABILITY | PTRAF | |
+| UNDER5 | PRE1960PCT |  |
+| OVER64 | PNPL | |
+| PRE1960 | PRMP | |
 |  | PTSDF | |
 |  | UST | |
-|  | PWDIS | |
+|  | PWDIS |  |
 
 ## How to Use the Tool
 ### Generate Full EJScreen Dataset
