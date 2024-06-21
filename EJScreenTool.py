@@ -577,7 +577,7 @@ def calDemogIdx(ejdf):
 
     
     #the code below shifts all demographic index values to be non-negative
-    #this is to account for cases where artificial effect could arise due to negative demographic index values
+    #this is to account for the cases where artifacts may arise due to negative demographic index values
     
     #get summary statistics of demographic indexes
     desc2 = ejdf["DEMOGIDX_2"].describe()
