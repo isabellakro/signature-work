@@ -12,7 +12,7 @@ All required packages come preinstalled in the default ArcGIS Pro 3.2 environmen
 | pandas        | 1.4.4         | 
 | numpy         | 1.20.1        | 
 | arcgis        | 2.1.0.2       |  
-| arcpy         | 3.1           |
+| arcpy         | 3.2           |
 
 ArcGIS Pro is required to export the results to an Esri feature class. 
 ## Input Requirements
