@@ -1,10 +1,10 @@
 # ejscreen-dataset-creator-2024
 
 ## Description
-`ejscreen-dataset-creator-2024` is a Python tool that automates the calculation of EJScreen indexes (`calIndexes`), percentiles (`percentileCal` and `percentileCalState`), bin and text fields (`calBinTxt`), and lookup tables to produce the EJScreen 2023 dataset. As an option, the dataset can be joined with the Census block groups or tracts to create a feature class (`exportSpatial`).
+`ejscreen-dataset-creator-2024` is a Python tool that automates the calculation of EJScreen indexes (`calIndexes`), percentiles (`percentileCal` and `percentileCalState`), bin and text fields (`calBinTxt`), and lookup tables to produce the EJScreen 2024 dataset. As an option, the dataset can be joined with the Census block groups or tracts to create a feature class (`exportSpatial`).
 
 ## Python Package Requirements
-All required packages come preinstalled in the default ArcGIS Pro 3.1 environment, which includes Python 3. The following are the packages and versions used in the development of this tool. 
+All required packages come preinstalled in the default ArcGIS Pro 3.2 environment, which includes Python 3. The following are the packages and versions used in the development of this tool. 
 
 | Package       | Version       | 
 | ------------- |--------------:|
@@ -12,7 +12,7 @@ All required packages come preinstalled in the default ArcGIS Pro 3.1 environmen
 | pandas        | 1.4.4         | 
 | numpy         | 1.20.1        | 
 | arcgis        | 2.1.0.2       |  
-| arcpy         | 3.1           |
+| arcpy         | 3.2           |
 
 ArcGIS Pro is required to export the results to an Esri feature class. 
 ## Input Requirements
