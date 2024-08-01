@@ -4,7 +4,7 @@ import sys
 def main(usa_st, input_table, output_data_csv, output_lookup, to_gdb, source_geom, output_fc, schema):
 
     if usa_st == 1:
-        EJScreenTool.ejscreen_cal(input_table, output_data_csv, output_lookup, to_gdb, source_geom, output_fc, schema)
+        EJScreenTool.ejscreen_cal(input_table, output_data_csv, output_lookup, to_gdb, source_geom, output_fc, schema, output_csv_path_state)
     if usa_st == 2:
         EJScreenTool.ejscreenState_cal(input_table, output_data_csv, output_lookup, to_gdb, source_geom, output_fc, schema)
 
@@ -16,16 +16,16 @@ if __name__ == '__main__':
     
     #set `option` to 1 to generate national percentiles.
     #set `option` to 2 to generate state percentiles
-    level = 2
+    level = 1
 
     #path to input csv dataset
-    input_csv_path = "data/EJSCREEN_2024_Corrected.csv"
+    input_csv_path = "data/EJSCREEN_2024_Ozone.csv"
 
     #path to output csv dataset
-    output_csv_path = "data/EJSCREEN_Min0_Output_State_2024.csv"
+    output_csv_path = "data/EJSCREEN_2024_USA_NewPctiles.csv"
 
     #path to output lookuptable excel file
-    lookuptable_xlsx_path = "data/lookup_State_Min0_2024.xlsx"
+    lookuptable_xlsx_path = "data/lookup_USA_NewPctiles.xlsx"
 
     #whether or not you wish to join the output to geometry and export to ESRI Feature Class
     output_to_featureclass = True
@@ -34,10 +34,12 @@ if __name__ == '__main__':
     geometry_featureclass_path = "data/BlockGroups.gdb/BG"
 
     #path to output ESRI Feature Class
-    output_featureclass_path = "data/BlockGroups.gdb/EJSCREEN_Output_State_Min0_2024"
+    output_featureclass_path = "data/BlockGroups.gdb/EJSCREEN_2024_USA_NewPctiles"
 
     #path to ESRI schema csv file 
-    schema_csv_path = "ejscreen_schema.csv"
+    schema_csv_path = "ejscreen_schema_usa.csv"
+
+    output_csv_path_state = "data/EJSCREEN_2024_State_NewPctiles.csv"
 
 #*************************************************************************************************************************************    
     if level != 1 and level != 2:

@@ -28,6 +28,7 @@ import col_names
 import warnings
 import math
 import os.path
+from collections import Counter
 #import arcpy
 #from arcgis import GeoAccessor, GeoSeriesAccessor
 
@@ -47,7 +48,7 @@ import os.path
 #   col_names.py will need to be up to date for all fields to be processed correctly. 
 #-------------------------------------------------------------------------------
 
-def ejscreen_cal(input_csv, output_csv, output_lookup, to_featureclass = False, geom_source = "", output_fc = "", schema = ""):
+def ejscreen_cal(input_csv, output_csv, output_lookup, to_featureclass = False, geom_source = "", output_fc = "", schema = "", state_csv = ""):
 
     #eliminates warnings that have no effect on results
     warnings.simplefilter(action='ignore', category=pd.errors.PerformanceWarning) 
@@ -92,7 +93,14 @@ def ejscreen_cal(input_csv, output_csv, output_lookup, to_featureclass = False, 
     ejscreen_lookup = pd.concat([indicator_lookup, index_lookup.drop(["PCTILE", "REGION"], axis = 1)], axis=1) 
 
     #put columns in correct order
-    ejscreen_full = ejscreen_full[col_names.cols_all] 
+    ejscreen_full = ejscreen_full[col_names.cols_all]
+
+    #if state percentiles have already been calculated, add state demographic indexes to the USA dataset
+    if os.path.exists(state_csv):
+        state_df = pd.read_csv(state_csv, usecols=["ID", "DEMOGIDX_2", "DEMOGIDX_5"], dtype = {"ID": str})
+        state_df = state_df.rename(columns = {"ID": "ID", "DEMOGIDX_2": "DEMOGIDX_2ST", "DEMOGIDX_5": "DEMOGIDX_5ST"})
+
+        ejscreen_full = pd.merge(ejscreen_full, state_df, on="ID")
         
     ejscreen_full.to_csv(output_csv)
     ejscreen_lookup.to_excel(output_lookup)
@@ -386,7 +394,7 @@ def calBinTxt(df, out_table = "", output = False):
      p_col = [col for col in df if col.startswith("P_")]
      
      print("Getting percentile columns...")
-     print(p_col)
+    
      
 
      print("Working on Bin fields...")
@@ -517,7 +525,13 @@ def getPctile(lookup_list, data_value):
           #that is greater than or equal to the input value
           lookup_index = next(x for x, val in enumerate(lookup_list) 
                                   if val >= data_value)              
-           
+          
+          d = Counter(lookup_list)
+
+ 
+          duplicates = list([item for item in d if d[item]>1])
+      
+          
           if (lookup_index > 0):
                 
                 #Fall back one percentile (unless the input value is equal to the lookup table value)
@@ -525,9 +539,14 @@ def getPctile(lookup_list, data_value):
                     lookup_index = lookup_index - 1
           
           
-          #.index() returns the the index of the first appearance of an input value.   
-          #this ensures that in the case of tied values, the lowest percentile is taken
-          pctile = lookup_list.index(lookup_list[lookup_index])     
+          if data_value in duplicates:
+            #.index() returns the the index of the first appearance of an input value.   
+            #this ensures that in the case of tied values, the lowest percentile is taken
+            pctile = lookup_list.index(lookup_list[lookup_index])
+          
+          else:
+              pctile = lookup_index
+                 
           
           return(pctile)
 
