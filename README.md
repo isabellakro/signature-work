@@ -1,4 +1,4 @@
-# ejscreen-dataset-creator-2024
+# ejscreen-dataset-creator-2.3
 
 ## Description
 `ejscreen-dataset-creator-2024` is a Python tool that automates the calculation of EJScreen indexes (`calIndexes`), percentiles (`percentileCal` and `percentileCalState`), bin and text fields (`calBinTxt`), and lookup tables to produce the EJScreen 2024 dataset. As an option, the dataset can be joined with the Census block groups or tracts to create a feature class (`exportSpatial`).
