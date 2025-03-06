@@ -19,16 +19,16 @@ if __name__ == '__main__':
     level = 1
 
     #path to input csv dataset
-    input_csv_path = "data/EJSCREEN_2024_Ozone.csv"
+    input_csv_path = "data/Onondaga_Data_EJScreen_2024.csv"
 
     #path to output csv dataset
-    output_csv_path = "data/EJSCREEN_2024_USA_NewPctiles.csv"
+    output_csv_path = "data/Onondaga_NewPctiles.csv"
 
     #path to output lookuptable excel file
-    lookuptable_xlsx_path = "data/lookup_USA_NewPctiles.xlsx"
+    lookuptable_xlsx_path = "data/lookup_NewPctiles.xlsx"
 
     #whether or not you wish to join the output to geometry and export to ESRI Feature Class
-    output_to_featureclass = True
+    output_to_featureclass = False
 
     #path to geometry which the output table will be joined
     geometry_featureclass_path = "data/BlockGroups.gdb/BG"
@@ -39,7 +39,7 @@ if __name__ == '__main__':
     #path to ESRI schema csv file 
     schema_csv_path = "ejscreen_schema_usa.csv"
 
-    output_csv_path_state = "data/EJSCREEN_2024_State_NewPctiles.csv"
+    output_csv_path_state = "data/EJSCREEN_NewPctiles.csv"
 
 #*************************************************************************************************************************************    
     if level != 1 and level != 2:
